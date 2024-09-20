@@ -5,10 +5,11 @@
 int main() {
     const int N = 1000000;  // Jumlah iterasi besar untuk menunjukkan efek memory leak
     int i;
-    int total_allocated = 0;
+    size_t total_allocated = 0; // Menggunakan size_t untuk total alokasi
+    size_t size_to_allocate = 1000 * sizeof(int);
 
     for (i = 0; i < N; ++i) {
-        int* arr = (int*)malloc(100 * sizeof(int));  // Alokasi memori
+        int* arr = (int*)malloc(size_to_allocate);  // Alokasi memori
 
         // Cek apakah alokasi berhasil
         if (arr == NULL) {
@@ -16,12 +17,12 @@ int main() {
             break;
         }
 
-        // Tambahkan jumlah memori yang dialokasikan ke total
-        total_allocated += 100 * sizeof(int);
+        // Tambahkan total memori yang dialokasikan
+        total_allocated += size_to_allocate;
 
         // Tampilkan output setiap kali memori bertambah
         if (i % 1000 == 0) {  // Tampilkan setiap 1000 iterasi
-            printf("Iteration %d: Total allocated memory: %d bytes\n", i, total_allocated);
+            printf("Iteration %d: Total allocated memory: %zu bytes\n", i, total_allocated);
             fflush(stdout);  // Pastikan output segera ditampilkan
         }
 
@@ -30,16 +31,13 @@ int main() {
             // Loop ini tidak melakukan apa-apa, hanya memperlambat eksekusi
         }
 
-        // Memory leak: tidak ada free(arr);
     }
 
-    printf("Program selesai. Total allocated memory: %d bytes\n", total_allocated);
+    printf("Program selesai. Total allocated memory: %zu bytes\n", total_allocated);
     printf("Program akan tetap berjalan untuk memantau hasil. Tekan Ctrl+C untuk menghentikannya.\n");
 
     // Loop idle setelah iterasi selesai
     while (1) {
-        // Program akan tetap dalam loop ini hingga dihentikan secara manual
-        // Anda dapat menambahkan logika tambahan jika diperlukan
         Sleep(1000);  // Jeda 1 detik untuk mengurangi beban CPU
     }
 
